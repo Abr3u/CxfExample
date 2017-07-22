@@ -1,6 +1,7 @@
 package org.company.example.webservice;
 
 import org.company.example.data.UserData;
+import org.company.example.database.DatabaseManager;
 import org.company.example.exception.DuplicateUserException;
 import org.company.example.exception.UserNotFoundException;
 import org.company.example.exception.ValidationException;
@@ -80,7 +81,8 @@ public class UserServiceEndpoint implements UserService {
 
 
 	public Collection<UserData> readAllUsers() {
-		return users.values();
+		DatabaseManager db = new DatabaseManager();
+		return db.selectAllUsers();
 	}
 
 
