@@ -17,48 +17,13 @@ public class UserClient implements UserService {
 
 	private UserService userService;
 
-	public static enum CLIENT_TYPE {
-		REST("REST"), SOAP("SOAP");
-
-		private String value;
-
-		private CLIENT_TYPE(String value) {
-			this.value = value;
-		}
-
-		public static CLIENT_TYPE fromString(String value) {
-
-			if (REST.value.equalsIgnoreCase(value)) {
-				return REST;
-			}
-
-			if (SOAP.value.equalsIgnoreCase(value)) {
-				return SOAP;
-			}
-
-			return null;
-		}
-	};
-
-	public UserClient(String applicationURI, CLIENT_TYPE clientType) {
-
-		if (clientType == CLIENT_TYPE.REST) {
-			List<Object> providers = new LinkedList<Object>();
-			providers.add(new UserResponseExceptionMapper());
-			userService = JAXRSClientFactory.create(applicationURI + "/cxf/rest/", UserService.class, providers,
-					true);
-			ClientConfiguration cfgProxy = WebClient.getConfig(userService);
-			cfgProxy.getHttpConduit().getAuthorization().setPassword("restuser");
-			cfgProxy.getHttpConduit().getAuthorization().setUserName("restuser");
-		} else {
-			JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
-			factory.setServiceClass(UserService.class);
-			factory.setAddress(applicationURI + "/cxf/soap/");
-			factory.setUsername("restuser");
-			factory.setPassword("restuser");
-			userService = (UserService) factory.create();
-		}
-
+	public UserClient(String applicationURI) {
+		JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+		factory.setServiceClass(UserService.class);
+		factory.setAddress(applicationURI + "/cxf/soap/");
+		factory.setUsername("restuser");
+		factory.setPassword("restuser");
+		userService = (UserService) factory.create();
 	}
 
 	public UserData createUser(UserData userData) throws DuplicateUserException {
@@ -69,16 +34,16 @@ public class UserClient implements UserService {
 		return userService.readUserByNif(nif);
 	}
 
+	public Collection<UserData> searchUsersByName(String name) throws UserNotFoundException {
+		return userService.searchUsersByName(name);
+	}
+
 	public Collection<UserData> readAllUsers() {
 		return userService.readAllUsers();
 	}
 
 	public void deleteUser(String nif) throws UserNotFoundException {
-
 		userService.deleteUser(nif);
-
 	}
 
-
-	
 }

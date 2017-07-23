@@ -24,6 +24,17 @@ import org.company.example.exception.UserNotFoundException;
 @WebService
 public interface UserService {
 
+	
+	@WebMethod
+	@GET
+	@Path("{name}")
+	@Descriptions({
+		@Description(value = "returns users with the specified name ", target = DocTarget.METHOD),
+		@Description(value = "the collection of user data", target = DocTarget.RETURN)
+	})
+    public Collection<UserData> searchUsersByName(@Description(value = "the name") @PathParam("name") @NotNull String name) throws UserNotFoundException;
+	
+	
 	@WebMethod
 	@GET
 	@Path("{nif}")

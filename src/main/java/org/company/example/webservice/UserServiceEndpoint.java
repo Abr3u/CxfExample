@@ -31,28 +31,35 @@ public class UserServiceEndpoint implements UserService {
 	private Validator validator;
 
 	public UserData readUserByNif(String nif) throws UserNotFoundException {
+		DatabaseManager db = new DatabaseManager();
 
-		
-		for(Map.Entry<String, UserData> entry : users.entrySet()) {
-			System.out.println("KEY "+entry.getKey());
-			System.out.println("DATA "+entry.getValue());
-		}
-		
-		System.out.println("SEARCHING for nif == "+nif);
-		
-		UserData userData = users.get(nif);
+		UserData userData = db.selectUserByNif(nif);
 
 		if (userData == null) {
 			throw new UserNotFoundException();
 		}
 
 		return userData;
-
 	}
 	
-	public UserData createUser(UserData userData) throws DuplicateUserException {
+	public Collection<UserData> searchUsersByName(String name) throws UserNotFoundException {		
+		DatabaseManager db = new DatabaseManager();
 
-		if (users.get(userData.getNif()) != null) {
+		Collection<UserData> userList = db.searchUsersByName(name);
+
+		if (userList.isEmpty()) {
+			throw new UserNotFoundException();
+		}
+
+		return userList;
+	}
+
+	public UserData createUser(UserData userData) throws DuplicateUserException {
+		DatabaseManager db = new DatabaseManager();
+
+		UserData test = db.selectUserByNif(userData.getNif());
+
+		if (test != null) {
 			throw new DuplicateUserException();
 		}
 
@@ -67,34 +74,26 @@ public class UserServiceEndpoint implements UserService {
 
 			throw new ValidationException(errors);
 		}
-		
-		storeUser(userData);
+
+		db.createUser(userData);
 
 		return userData;
 	}
-
-	private void storeUser(UserData userData) {
-
-		users.put(userData.getNif(), userData);
-
-	}
-
 
 	public Collection<UserData> readAllUsers() {
 		DatabaseManager db = new DatabaseManager();
 		return db.selectAllUsers();
 	}
 
-
 	public void deleteUser(String nif) throws UserNotFoundException {
-		UserData userData = users.get(nif);
+		DatabaseManager db = new DatabaseManager();
 
-		if (userData == null) {
+		UserData test = db.selectUserByNif(nif);
+		
+		if (test == null) {
 			throw new UserNotFoundException();
 		}
 
-		users.remove(nif);
-
+		db.deleteUser(nif);
 	}
-
 }
