@@ -6,7 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>CXF Rest test application</title>
+<title>CXF test app</title>
 <style>
 	.error {color : red;}
 </style>
@@ -29,7 +29,6 @@ All users : <a href="<c:url value="/cxf/rest/user/*"/>">/rest/user/*</a>
 <table border="1">
 <tr>
 <th>Result</th>
-<th>Rest URLs</th>
 </tr>
 
 <c:forEach items="${userDataList}" var="userData">
@@ -47,14 +46,6 @@ Address is : ${userData.address}
 Contact is : ${userData.contact}
 <br />
 
-</td>
-<td>
-	<a href="<c:url value="/cxf/rest/user/${userData.nif}"/>">/cxf/rest/user/${userData.nif}</a>
-<br />
-	<a href="<c:url value="/cxf/rest/user/${userData.nif}.xml"/>">/cxf/rest/user/${userData.nif}.xml</a>
-<br />
-	<a href="<c:url value="/cxf/rest/user/${userData.nif}.json"/>">/cxf/rest/user/${userData.nif}.json</a>
-<br />
 </td>
 </c:forEach>
 
